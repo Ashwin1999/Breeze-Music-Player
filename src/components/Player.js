@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react'
-import {audioPlayer} from '../util'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlay, faPause, faAngleLeft, faAngleRight} from '@fortawesome/free-solid-svg-icons';
 
@@ -9,16 +8,14 @@ const Player = ({songs, currentSong, setSongs, setCurrentSong, isPlaying, playSo
         setSongInfo({...songInfo, currentTime:e.target.value})
     }
 
-    const skipSongHandler = (direction) => {
+    const skipSongHandler = async (direction) => {
         const currentIndex = songs.findIndex((item)=>item.id===currentSong.id)
-        const nextSong=(currentIndex+1)%songs.length
-        const prevSong=(currentIndex===0)?(songs.length-1):((currentIndex-1)%songs.length)
         if(direction==='forward'){
-            setCurrentSong(songs[nextSong])
-            audioPlayer(isPlaying, audioRef)
+            await setCurrentSong(songs[(currentIndex+1)%songs.length])
+            if(isPlaying) audioRef.current.play()
         }else if(direction==='backward'){
-            setCurrentSong(songs[prevSong])
-            audioPlayer(isPlaying, audioRef)
+            await setCurrentSong(songs[(currentIndex===0)?(songs.length-1):((currentIndex-1)%songs.length)])
+            if(isPlaying) audioRef.current.play()
         }
     }
 
